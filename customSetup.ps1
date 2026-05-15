@@ -296,12 +296,21 @@ function Deploy-ConfigFile {
     $tmp = "$DestPath.download"
     try {
         Invoke-Download -Url $Url -OutFile $tmp
-        $raw = Get-Content $tmp -Raw
-        $stripped = [regex]::Replace($raw, '(?m)^\s*//.*$', '')
-        $stripped = [regex]::Replace($stripped, ',\s*(\}|\])', '$1')
-        try { $null = $stripped | ConvertFrom-Json } catch {
-            throw "Downloaded file is not valid JSON: $Url"
+
+        # Lightweight sanity check: non-empty and starts with '{'.
+        # We deliberately don't try to fully parse JSONC here — VS Code's
+        # parser is more permissive than .NET's, and false negatives are worse
+        # than letting an obviously-bad file through.
+        $info = Get-Item $tmp
+        if ($info.Length -eq 0) {
+            throw "Downloaded file is empty: $Url"
         }
+        $firstChar = (Get-Content $tmp -TotalCount 1 -Raw).TrimStart() `
+                     -replace '^\xEF\xBB\xBF', ''   # strip BOM if present
+        if ($firstChar -notmatch '^\s*\{') {
+            throw "Downloaded file does not look like a JSON object: $Url"
+        }
+
         Move-Item $tmp $DestPath -Force
         Write-Ok "Wrote $DestPath"
     } finally {
