@@ -1,0 +1,50 @@
+{
+    "latex-workshop.latex.autoBuild.run": "never",
+    "editor.minimap.enabled": false,
+    "security.workspace.trust.untrustedFiles": "open",
+    "latex-workshop.latex.recipe.default": "lastUsed",
+    "claudeCode.preferredLocation": "panel",
+    "lean4.alwaysAskBeforeInstallingLeanVersions": false,
+    "gitlens.ai.model": "gitkraken",
+    "gitlens.ai.gitkraken.model": "gemini:gemini-2.5-flash",
+    "vim.normalModeKeyBindingsNonRecursive": [
+        {
+            "before": ["<Esc>"],
+            "when": ["editorFocus"],
+            "commands": [":nohl"],
+            "silent": true
+        }
+    ],
+    "vim.visualModeKeyBindings": [
+        {
+        "before": ["p"],
+        "after": ["P"]
+        }
+    ],
+    // controls vim remapping of certain shortcuts
+    "vim.handleKeys": {
+        "<C-a>": false, 
+        "<C-f>": false //ctrl+f serves for search - it is disabled in vim 
+    },
+    "vim.incsearch": true,
+    "vim.searchHighlightColor": "#f6ff0080",
+    "vim.searchHighlightTextColor": "#fff",
+    "vim.useSystemClipboard": true,
+    // remap CTRL bindings --> true
+    "vim.useCtrlKeys": true,
+    //highlight searched strings
+    "vim.hlsearch": true,
+    "vim.highlightedyank.enable": true,
+    "vim.smartRelativeLine": true,
+    "vim.surround": true,
+    "extensions.experimental.affinity": {
+        "vscodevim.vim": 1
+    },
+    "todohighlight.keywords": [
+        {
+        "text": "NOTE:",
+        "color": "#3c3c3c",
+        "backgroundColor": "lightblue"
+        }
+    ]
+}
