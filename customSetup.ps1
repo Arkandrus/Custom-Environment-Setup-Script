@@ -16,21 +16,38 @@
 .PARAMETER NoUpgrade
     If Git or PowerToys are already installed, skip them entirely instead of
     running winget upgrade.
+
+.DESCRIPTION
+    Hosted at: https://github.com/Arkandrus/Custom-Environment-Setup-Script
+
+    Two usage modes:
+
+    (a) One-liner from PowerShell:
+        irm https://raw.githubusercontent.com/Arkandrus/Custom-Environment-Setup-Script/main/customSetup.ps1 | iex
+
+    (b) Clone or download the repo, then run with -LocalConfigDir:
+        .\setup.ps1 -LocalConfigDir $PSScriptRoot
 #>
 [CmdletBinding()]
 param(
+    [string]$RepoOwner   = 'Arkandrus',
+    [string]$RepoName    = 'Custom-Environment-Setup-Script',
+    [string]$RepoBranch  = 'main',
+    [string]$LocalConfigDir,
+
     [switch]$BackupExisting,
     [switch]$SystemInstall,
     [switch]$NoUpgrade,
-    [switch]$SkipPowerToys  # useful on headless servers
+    [switch]$SkipPowerToys
 )
 
 $ErrorActionPreference = 'Stop'
 
 # --- Configuration ---------------------------------------------------------
 
-$SettingsUrl    = 'https://home.zcu.cz/~kudlacm/settings.json'
-$KeybindingsUrl = 'https://home.zcu.cz/~kudlacm/keybindings.json'
+$RawBase = "https://raw.githubusercontent.com/$RepoOwner/$RepoName/$RepoBranch"
+$SettingsUrl    = "$RawBase/settings.json"
+$KeybindingsUrl = "$RawBase/keybindings.json"
 
 $Extensions = @(
     'ms-dotnettools.vscode-dotnet-runtime',
@@ -79,27 +96,24 @@ function Test-PowerToysInstalled {
     return $false
 }
 
-# --- Generic download with retry ------------------------------------------
+# --- Networking ------------------------------------------------------------
 
 function Invoke-Download {
     param([string]$Url, [string]$OutFile)
-    # Force TLS 1.2 for older PowerShell on Server 2022 default config.
     [Net.ServicePointManager]::SecurityProtocol = `
         [Net.SecurityProtocolType]::Tls12 -bor [Net.SecurityProtocolType]::Tls13
     Invoke-WebRequest -Uri $Url -OutFile $OutFile -UseBasicParsing
 }
 
-# --- Direct download installers -------------------------------------------
+# --- Direct download installers (Server 2022 / no winget) -----------------
 
 function Install-GitDirect {
     Write-Step "Resolving latest Git for Windows release..."
-    # GitHub API gives us the asset URL for the 64-bit installer.
     $api = 'https://api.github.com/repos/git-for-windows/git/releases/latest'
     $headers = @{ 'User-Agent' = 'PowerShell-Setup-Script' }
     $rel = Invoke-RestMethod -Uri $api -Headers $headers -UseBasicParsing
-    $asset = $rel.assets | Where-Object {
-        $_.name -match '^Git-.*-64-bit\.exe$'
-    } | Select-Object -First 1
+    $asset = $rel.assets | Where-Object { $_.name -match '^Git-.*-64-bit\.exe$' } |
+             Select-Object -First 1
     if (-not $asset) { throw "Could not find Git 64-bit installer asset." }
 
     $installer = Join-Path $env:TEMP $asset.name
@@ -107,8 +121,7 @@ function Install-GitDirect {
     Invoke-Download -Url $asset.browser_download_url -OutFile $installer
 
     Write-Step "Installing Git silently..."
-    # Git uses Inno Setup. /VERYSILENT for no UI, /NORESTART, sensible defaults.
-    $args = @('/VERYSILENT', '/NORESTART', '/SUPPRESSMSGBOXES', '/SP-',
+    $args = @('/VERYSILENT','/NORESTART','/SUPPRESSMSGBOXES','/SP-',
               '/COMPONENTS=icons,ext\reg\shellhere,assoc,assoc_sh')
     $p = Start-Process -FilePath $installer -ArgumentList $args -Wait -PassThru
     Remove-Item $installer -Force -ErrorAction SilentlyContinue
@@ -127,10 +140,8 @@ function Install-PowerToysDirect {
         else { 'x64' }
     } else { 'x86' }
 
-    # Prefer per-machine MSI for unattended/server installs.
-    $asset = $rel.assets | Where-Object {
-        $_.name -match "PowerToysSetup.*$arch\.exe$"
-    } | Select-Object -First 1
+    $asset = $rel.assets | Where-Object { $_.name -match "PowerToysSetup.*$arch\.exe$" } |
+             Select-Object -First 1
     if (-not $asset) { throw "Could not find PowerToys $arch installer." }
 
     $installer = Join-Path $env:TEMP $asset.name
@@ -138,18 +149,16 @@ function Install-PowerToysDirect {
     Invoke-Download -Url $asset.browser_download_url -OutFile $installer
 
     Write-Step "Installing PowerToys silently..."
-    # PowerToys installer accepts /silent and /norestart.
-    $args = @('/silent', '/norestart')
-    $p = Start-Process -FilePath $installer -ArgumentList $args -Wait -PassThru
+    $p = Start-Process -FilePath $installer -ArgumentList @('/silent','/norestart') `
+                       -Wait -PassThru
     Remove-Item $installer -Force -ErrorAction SilentlyContinue
     if ($p.ExitCode -ne 0 -and $p.ExitCode -ne 3010) {
-        # 3010 = success, reboot required.
         throw "PowerToys installer exit code $($p.ExitCode)."
     }
     Write-Ok "PowerToys installed."
 }
 
-# --- winget path (when available) -----------------------------------------
+# --- winget path -----------------------------------------------------------
 
 function Ensure-WingetPackage {
     param([string]$Name, [string]$Id, [switch]$SkipUpgrade)
@@ -159,10 +168,7 @@ function Ensure-WingetPackage {
     $installed = ($LASTEXITCODE -eq 0) -and ($list -match [regex]::Escape($Id))
 
     if ($installed) {
-        if ($SkipUpgrade) {
-            Write-Ok "$Name already installed; skipping."
-            return
-        }
+        if ($SkipUpgrade) { Write-Ok "$Name already installed; skipping."; return }
         Write-Ok "$Name already installed. Checking for upgrade..."
         $out = winget upgrade --id $Id --exact --silent `
             --accept-source-agreements --accept-package-agreements 2>&1
@@ -182,16 +188,15 @@ function Ensure-WingetPackage {
     }
 }
 
-# --- Dispatcher: pick winget or direct download per package ---------------
+# --- Dispatcher: winget when present, direct otherwise --------------------
 
 function Ensure-Git {
     param([switch]$SkipUpgrade)
     if (Test-GitInstalled) {
         Write-Ok "Git already installed."
         if (-not $SkipUpgrade -and (Test-WingetAvailable)) {
-            # If winget is around, let it handle upgrades.
             try { Ensure-WingetPackage -Name 'Git' -Id 'Git.Git' } catch {
-                Write-Warn2 "winget upgrade of Git failed; leaving existing install alone."
+                Write-Warn2 "winget upgrade of Git failed; leaving existing install."
             }
         }
         return
@@ -199,7 +204,7 @@ function Ensure-Git {
     if (Test-WingetAvailable) {
         Ensure-WingetPackage -Name 'Git' -Id 'Git.Git' -SkipUpgrade:$SkipUpgrade
     } else {
-        Write-Warn2 "winget unavailable; using direct download for Git."
+        Write-Warn2 "winget unavailable; direct download for Git."
         Install-GitDirect
     }
 }
@@ -210,7 +215,7 @@ function Ensure-PowerToys {
         Write-Ok "PowerToys already installed."
         if (-not $SkipUpgrade -and (Test-WingetAvailable)) {
             try { Ensure-WingetPackage -Name 'PowerToys' -Id 'Microsoft.PowerToys' } catch {
-                Write-Warn2 "winget upgrade of PowerToys failed; leaving existing install alone."
+                Write-Warn2 "winget upgrade of PowerToys failed; leaving existing install."
             }
         }
         return
@@ -218,12 +223,12 @@ function Ensure-PowerToys {
     if (Test-WingetAvailable) {
         Ensure-WingetPackage -Name 'PowerToys' -Id 'Microsoft.PowerToys' -SkipUpgrade:$SkipUpgrade
     } else {
-        Write-Warn2 "winget unavailable; using direct download for PowerToys."
+        Write-Warn2 "winget unavailable; direct download for PowerToys."
         Install-PowerToysDirect
     }
 }
 
-# --- VS Code (unchanged from prior version) -------------------------------
+# --- VS Code ---------------------------------------------------------------
 
 function Get-VSCodePaths {
     foreach ($base in @($UserInstallPath, $SystemInstallPath)) {
@@ -259,7 +264,8 @@ function Ensure-Extensions {
     param([string]$CodeCmd, [string[]]$Wanted)
     Write-Step "Querying installed VS Code extensions..."
     $installedRaw = & $CodeCmd --list-extensions 2>$null
-    $installed = @($installedRaw | ForEach-Object { $_.Trim().ToLowerInvariant() } | Where-Object { $_ })
+    $installed = @($installedRaw | ForEach-Object { $_.Trim().ToLowerInvariant() } |
+                   Where-Object { $_ })
     foreach ($ext in $Wanted) {
         if ($installed -contains $ext.ToLowerInvariant()) {
             Write-Ok "Already installed: $ext"
@@ -272,10 +278,14 @@ function Ensure-Extensions {
     }
 }
 
+# --- Config deployment (URL or local file) ---------------------------------
+
 function Deploy-ConfigFile {
     param([string]$Url, [string]$DestPath, [switch]$Backup)
     $destDir = Split-Path $DestPath -Parent
-    if (-not (Test-Path $destDir)) { New-Item -ItemType Directory -Path $destDir -Force | Out-Null }
+    if (-not (Test-Path $destDir)) {
+        New-Item -ItemType Directory -Path $destDir -Force | Out-Null
+    }
     if ((Test-Path $DestPath) -and $Backup) {
         $stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
         Copy-Item $DestPath "$DestPath.$stamp.bak" -Force
@@ -296,6 +306,36 @@ function Deploy-ConfigFile {
     } finally {
         if (Test-Path $tmp) { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
     }
+}
+
+function Deploy-Config {
+    param(
+        [Parameter(Mandatory)][string]$FileName,
+        [Parameter(Mandatory)][string]$Url,
+        [Parameter(Mandatory)][string]$DestPath,
+        [string]$LocalDir,
+        [switch]$Backup
+    )
+    if ($LocalDir) {
+        $localFile = Join-Path $LocalDir $FileName
+        if (Test-Path $localFile) {
+            Write-Step "Using local $FileName from $LocalDir"
+            $destDir = Split-Path $DestPath -Parent
+            if (-not (Test-Path $destDir)) {
+                New-Item -ItemType Directory -Path $destDir -Force | Out-Null
+            }
+            if ((Test-Path $DestPath) -and $Backup) {
+                $stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
+                Copy-Item $DestPath "$DestPath.$stamp.bak" -Force
+                Write-Ok "Backed up to $DestPath.$stamp.bak"
+            }
+            Copy-Item $localFile $DestPath -Force
+            Write-Ok "Wrote $DestPath"
+            return
+        }
+        Write-Warn2 "Local $FileName not found in $LocalDir; falling back to URL."
+    }
+    Deploy-ConfigFile -Url $Url -DestPath $DestPath -Backup:$Backup
 }
 
 # --- Main ------------------------------------------------------------------
@@ -323,7 +363,10 @@ Ensure-Extensions -CodeCmd $vscode.CodeCmd -Wanted $Extensions
 $userDir      = Join-Path $env:APPDATA 'Code\User'
 $settingsPath = Join-Path $userDir 'settings.json'
 $keybindsPath = Join-Path $userDir 'keybindings.json'
-Deploy-ConfigFile -Url $SettingsUrl    -DestPath $settingsPath -Backup:$BackupExisting
-Deploy-ConfigFile -Url $KeybindingsUrl -DestPath $keybindsPath -Backup:$BackupExisting
+
+Deploy-Config -FileName 'settings.json'    -Url $SettingsUrl    `
+              -DestPath $settingsPath -LocalDir $LocalConfigDir -Backup:$BackupExisting
+Deploy-Config -FileName 'keybindings.json' -Url $KeybindingsUrl `
+              -DestPath $keybindsPath -LocalDir $LocalConfigDir -Backup:$BackupExisting
 
 Write-Step "Done."
