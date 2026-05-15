@@ -351,6 +351,37 @@ function Deploy-Config {
     Deploy-ConfigFile -Url $Url -DestPath $DestPath -Backup:$Backup
 }
 
+# --- Companion script: nuget-feed-setup.ps1 -------------------------------
+# Downloads the standalone NuGet feed setup script to the user's Documents
+# folder so it can be run later with the appropriate -FeedName / -FeedUrl.
+# This script cannot be invoked via 'irm | iex' because that pattern does
+# not support passing parameters.
+
+function Fetch-NuGetSetupScript {
+    $rawBase = "https://raw.githubusercontent.com/$RepoOwner/$RepoName/$RepoBranch"
+    $url     = "$rawBase/nuget-feed-setup.ps1"
+
+    $docs = [Environment]::GetFolderPath('MyDocuments')
+    if ([string]::IsNullOrWhiteSpace($docs)) {
+        # Fallback if Documents folder is redirected/missing.
+        $docs = $env:USERPROFILE
+    }
+    $dest = Join-Path $docs 'nuget-feed-setup.ps1'
+
+    Write-Step "Downloading nuget-feed-setup.ps1 to Documents..."
+    try {
+        Invoke-WebRequest -Uri $url -OutFile $dest -UseBasicParsing
+        Write-Ok "Saved to $dest"
+        Write-Host ""
+        Write-Host "    To register a private NuGet feed later, run:" -ForegroundColor DarkGray
+        Write-Host "      & '$dest' -FeedName '<name>' -FeedUrl '<v3-index-url>'" -ForegroundColor White
+        Write-Host ""
+    } catch {
+        Write-Warn2 "Could not download nuget-feed-setup.ps1: $($_.Exception.Message)"
+        Write-Warn2 "Fetch it manually from $url"
+    }
+}
+
 # --- Main ------------------------------------------------------------------
 
 Ensure-Git -SkipUpgrade:$NoUpgrade
@@ -381,5 +412,7 @@ Deploy-Config -FileName 'settings.json'    -Url $SettingsUrl    `
               -DestPath $settingsPath -LocalDir $LocalConfigDir -Backup:$BackupExisting
 Deploy-Config -FileName 'keybindings.json' -Url $KeybindingsUrl `
               -DestPath $keybindsPath -LocalDir $LocalConfigDir -Backup:$BackupExisting
+
+Fetch-NuGetSetupScript
 
 Write-Step "Done."
