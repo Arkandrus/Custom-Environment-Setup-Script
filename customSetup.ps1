@@ -23,7 +23,7 @@
     Two usage modes:
 
     (a) One-liner from PowerShell:
-        irm https://raw.githubusercontent.com/Arkandrus/Custom-Environment-Setup-Script/main/customSetup.ps1 | iex
+        irm https://raw.githubusercontent.com/Arkandrus/Custom-Environment-Setup-Script/master/customSetup.ps1 | iex
 
     (b) Clone or download the repo, then run with -LocalConfigDir:
         .\setup.ps1 -LocalConfigDir $PSScriptRoot
@@ -32,7 +32,7 @@
 param(
     [string]$RepoOwner   = 'Arkandrus',
     [string]$RepoName    = 'Custom-Environment-Setup-Script',
-    [string]$RepoBranch  = 'main',
+    [string]$RepoBranch  = 'master',
     [string]$LocalConfigDir,
 
     [switch]$BackupExisting,
