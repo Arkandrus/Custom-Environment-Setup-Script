@@ -51,6 +51,10 @@ $KeybindingsUrl = "$RawBase/keybindings.json"
 
 $Extensions = @(
     'ms-dotnettools.vscode-dotnet-runtime',
+    'ms-dotnettools.csharp',
+    'ms-dotnettools.csdevkit',
+    'ms-dotnettools.vscodeintellicode-csharp',
+    'editorconfig.editorconfig',
     'formulahendry.code-runner',
     'streetsidesoftware.code-spell-checker',
     'eamodio.gitlens',
