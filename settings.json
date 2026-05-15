@@ -7,6 +7,7 @@
     "lean4.alwaysAskBeforeInstallingLeanVersions": false,
     "gitlens.ai.model": "gitkraken",
     "gitlens.ai.gitkraken.model": "gemini:gemini-2.5-flash",
+    "gitlens.plusFeatures.enabled": false,
     "vim.normalModeKeyBindingsNonRecursive": [
         {
             "before": ["<Esc>"],
