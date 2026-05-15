@@ -377,7 +377,7 @@ function Fetch-NuGetSetupScript {
         Write-Host "      & '$dest' -FeedName '<name>' -FeedUrl '<v3-index-url>'" -ForegroundColor White
         Write-Host ""
     } catch {
-        Write-Warn2 "Could not download nuget-feed-setup.ps1: $($_.Exception.Message)"
+        Write-Warn2 "Could not download nugetSetup.ps1: $($_.Exception.Message)"
         Write-Warn2 "Fetch it manually from $url"
     }
 }
