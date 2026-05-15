@@ -306,7 +306,7 @@ function Deploy-ConfigFile {
             throw "Downloaded file is empty: $Url"
         }
         $content = (Get-Content $tmp -Raw) -replace '^\xEF\xBB\xBF', ''  # strip BOM
-        if ($content.TrimStart() -notmatch '^\{') {
+        if ($content.TrimStart() -notmatch '^[\{\[]') {
             throw "Downloaded file does not look like a JSON object: $Url"
         }
 
