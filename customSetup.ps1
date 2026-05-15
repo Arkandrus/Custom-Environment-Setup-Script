@@ -57,7 +57,8 @@ $Extensions = @(
     'ms-vscode.live-server',
     'wayou.vscode-todo-highlight',
     'vscodevim.vim',
-    'tobias-z.vscode-harpoon'
+    'tobias-z.vscode-harpoon',
+    'ms-vscode.powershell'
 )
 
 $UserInstallPath   = Join-Path $env:LOCALAPPDATA 'Programs\Microsoft VS Code'
