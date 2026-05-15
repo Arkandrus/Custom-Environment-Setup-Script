@@ -358,17 +358,18 @@ function Deploy-Config {
 # not support passing parameters.
 
 function Fetch-NuGetSetupScript {
+    $scriptName = 'nugetSetup.ps1'
     $rawBase = "https://raw.githubusercontent.com/$RepoOwner/$RepoName/$RepoBranch"
-    $url     = "$rawBase/nuget-feed-setup.ps1"
+    $url     = "$rawBase/$scriptName"
 
     $docs = [Environment]::GetFolderPath('MyDocuments')
     if ([string]::IsNullOrWhiteSpace($docs)) {
         # Fallback if Documents folder is redirected/missing.
         $docs = $env:USERPROFILE
     }
-    $dest = Join-Path $docs 'nuget-feed-setup.ps1'
+    $dest = Join-Path $docs $scriptName
 
-    Write-Step "Downloading nuget-feed-setup.ps1 to Documents..."
+    Write-Step "Downloading $scriptName to Documents..."
     try {
         Invoke-WebRequest -Uri $url -OutFile $dest -UseBasicParsing
         Write-Ok "Saved to $dest"
@@ -377,7 +378,7 @@ function Fetch-NuGetSetupScript {
         Write-Host "      & '$dest' -FeedName '<name>' -FeedUrl '<v3-index-url>'" -ForegroundColor White
         Write-Host ""
     } catch {
-        Write-Warn2 "Could not download nugetSetup.ps1: $($_.Exception.Message)"
+        Write-Warn2 "Could not download $scriptName`: $($_.Exception.Message)"
         Write-Warn2 "Fetch it manually from $url"
     }
 }
