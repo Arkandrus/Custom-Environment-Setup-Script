@@ -1,5 +1,5 @@
-// Place your key bindings in this file to override the defaults
 [
+    // Place your key bindings in this file to override the defaults
     {
         "key": "shift+alt+f12",
         "command": "markdown.findAllFileReferences"
