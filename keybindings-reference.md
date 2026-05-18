@@ -136,6 +136,8 @@
 | `Space C C` | Toggle Copilot / auxiliary bar |
 | `Space C F` | Open Copilot Chat |
 
+> **Note:** When Vim is in Normal mode inside a chat input, `Space` types a literal space instead of opening the leader menu — preventing accidental command triggers. Press `i` to enter Insert mode for normal typing.
+
 ---
 
 ## Layout & View

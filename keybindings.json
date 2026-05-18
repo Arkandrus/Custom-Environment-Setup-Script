@@ -1,5 +1,17 @@
 [
     // ====================================================================
+    // Chat panel safeguard
+    // Typing Space in a chat input while Vim is in Normal mode would
+    // otherwise start a space-leader chord and trigger editor commands.
+    // This binding intercepts it first and types a literal space instead.
+    // ====================================================================
+    {
+        "key": "space",
+        "command": "type",
+        "args": { "text": " " },
+        "when": "inChatInput && vim.mode == 'Normal' && editorTextFocus"
+    },
+    // ====================================================================
     // Preserved bindings
     // ====================================================================
     {
