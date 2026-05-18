@@ -58,7 +58,7 @@ $Extensions = @(
     'streetsidesoftware.code-spell-checker',
     'eamodio.gitlens',
     'ms-vscode.live-server',
-    'wayou.vscode-todo-highlight',
+    'wayou.vscode-todo-highlight'
     'vscodevim.vim',
     'tobias-z.vscode-harpoon',
     'ms-vscode.powershell'

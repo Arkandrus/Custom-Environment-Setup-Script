@@ -1,17 +1,5 @@
 [
     // ====================================================================
-    // Chat panel safeguard
-    // Typing Space in a chat input while Vim is in Normal mode would
-    // otherwise start a space-leader chord and trigger editor commands.
-    // This binding intercepts it first and types a literal space instead.
-    // ====================================================================
-    {
-        "key": "space",
-        "command": "type",
-        "args": { "text": " " },
-        "when": "inChatInput && vim.mode == 'Normal' && editorTextFocus"
-    },
-    // ====================================================================
     // Preserved bindings
     // ====================================================================
     {
@@ -42,17 +30,17 @@
     {
         "key": "tab",
         "command": "workbench.action.nextEditorInGroup",
-        "when": "(vim.mode == 'Normal' || vim.mode == 'Visual') && (editorTextFocus || !inputFocus)"
+        "when": "(vim.mode == 'Normal' || vim.mode == 'Visual') && editorTextFocus"
     },
     {
         "key": "shift+tab",
         "command": "workbench.action.previousEditorInGroup",
-        "when": "(vim.mode == 'Normal' || vim.mode == 'Visual') && (editorTextFocus || !inputFocus)"
+        "when": "(vim.mode == 'Normal' || vim.mode == 'Visual') && editorTextFocus"
     },
     {
         "key": "space b o",
         "command": "workbench.action.closeOtherEditors",
-        "when": "(vim.mode == 'Normal' || vim.mode == 'Visual') && (editorTextFocus || !inputFocus)"
+        "when": "(vim.mode == 'Normal' || vim.mode == 'Visual') && editorTextFocus"
     },
     // ---------- File Tree ----------
     {
@@ -64,7 +52,7 @@
                 "workbench.files.action.focusFilesExplorer"
             ]
         },
-        "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus) && !sideBarFocus"
+        "when": "vim.mode == 'Normal' && editorTextFocus && !sideBarFocus"
     },
     {
         "key": "space e",
@@ -221,12 +209,12 @@
                 "workbench.scm.focus"
             ]
         },
-        "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
+        "when": "vim.mode == 'Normal' && editorTextFocus"
     },
     {
         "key": "space g t",
         "command": "workbench.action.terminal.new",
-        "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
+        "when": "vim.mode == 'Normal' && editorTextFocus"
     },
     {
         "key": "space q",
@@ -267,7 +255,7 @@
     {
         "key": "space f f",
         "command": "workbench.action.quickOpen",
-        "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
+        "when": "vim.mode == 'Normal' && editorTextFocus"
     },
     {
         "key": "space g d",
@@ -322,37 +310,37 @@
     {
         "key": "space h",
         "command": "vscode-harpoon.editEditors",
-        "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
+        "when": "vim.mode == 'Normal' && editorTextFocus"
     },
     {
         "key": "space p",
         "command": "vscode-harpoon.editorQuickPick",
-        "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
+        "when": "vim.mode == 'Normal' && editorTextFocus"
     },
     {
         "key": "space [Digit1]",
         "command": "vscode-harpoon.gotoEditor1",
-        "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
+        "when": "vim.mode == 'Normal' && editorTextFocus"
     },
     {
         "key": "space [Digit2]",
         "command": "vscode-harpoon.gotoEditor2",
-        "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
+        "when": "vim.mode == 'Normal' && editorTextFocus"
     },
     {
         "key": "space [Digit3]",
         "command": "vscode-harpoon.gotoEditor3",
-        "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
+        "when": "vim.mode == 'Normal' && editorTextFocus"
     },
     {
         "key": "space [Digit4]",
         "command": "vscode-harpoon.gotoEditor4",
-        "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
+        "when": "vim.mode == 'Normal' && editorTextFocus"
     },
     {
         "key": "space [Digit5]",
         "command": "vscode-harpoon.gotoEditor5",
-        "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
+        "when": "vim.mode == 'Normal' && editorTextFocus"
     },
     // ====================================================================
     // Gap-fillers
@@ -361,23 +349,23 @@
     {
         "key": "space c c",
         "command": "workbench.action.toggleAuxiliaryBar",
-        "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
+        "when": "vim.mode == 'Normal' && editorTextFocus"
     },
     {
         "key": "space c f",
         "command": "workbench.action.chat.open",
-        "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
+        "when": "vim.mode == 'Normal' && editorTextFocus"
     },
     // ---------- Test Explorer ----------
     {
         "key": "space t t",
         "command": "workbench.view.testing.focus",
-        "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
+        "when": "vim.mode == 'Normal' && editorTextFocus"
     },
     {
         "key": "space t r",
         "command": "testing.runAll",
-        "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
+        "when": "vim.mode == 'Normal' && editorTextFocus"
     },
     {
         "key": "space t f",
@@ -388,34 +376,34 @@
     {
         "key": "space z",
         "command": "workbench.action.toggleZenMode",
-        "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
+        "when": "vim.mode == 'Normal' && editorTextFocus"
     },
     // ---------- Outline ----------
     {
         "key": "space o",
         "command": "outline.focus",
-        "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
+        "when": "vim.mode == 'Normal' && editorTextFocus"
     },
     // ---------- Panel resize ----------
     {
         "key": "space u h",
         "command": "workbench.action.increaseViewWidth",
-        "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
+        "when": "vim.mode == 'Normal' && editorTextFocus"
     },
     {
         "key": "space u shift+h",
         "command": "workbench.action.decreaseViewWidth",
-        "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
+        "when": "vim.mode == 'Normal' && editorTextFocus"
     },
     {
         "key": "space u v",
         "command": "workbench.action.increaseViewHeight",
-        "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
+        "when": "vim.mode == 'Normal' && editorTextFocus"
     },
     {
         "key": "space u shift+v",
         "command": "workbench.action.decreaseViewHeight",
-        "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
+        "when": "vim.mode == 'Normal' && editorTextFocus"
     },
     {
         "key": "space u m",
