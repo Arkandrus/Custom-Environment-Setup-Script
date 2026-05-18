@@ -134,7 +134,7 @@
 | Key | Action |
 |-----|--------|
 | `Space C C` | Toggle Copilot / auxiliary bar |
-| `Space C F` | Open Copilot Chat |
+| `Space C F` | Open Claude Code sidebar |
 | `Ctrl+1` | Return focus to editor from Claude Code chat |
 
 > **Note:** `Ctrl+H` and other Space-leader bindings are intercepted by the Claude Code webview and do not work from inside it. `Ctrl+1` is handled at the VSCode window level and always works.

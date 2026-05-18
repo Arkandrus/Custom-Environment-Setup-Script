@@ -353,7 +353,7 @@
     },
     {
         "key": "space c f",
-        "command": "workbench.action.chat.open",
+        "command": "claude-vscode.sidebar.open",
         "when": "vim.mode == 'Normal' && editorTextFocus"
     },
     // ---------- Test Explorer ----------
