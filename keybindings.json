@@ -183,6 +183,17 @@
         "command": "-selectPrevCodeAction",
         "when": "codeActionMenuVisible"
     },
+    // ---------- Indentation (Visual mode) ----------
+    {
+        "key": "?",
+        "command": "editor.action.outdentLines",
+        "when": "(vim.mode == 'Visual' || vim.mode == 'VisualLine') && editorTextFocus"
+    },
+    {
+        "key": "_",
+        "command": "editor.action.indentLines",
+        "when": "(vim.mode == 'Visual' || vim.mode == 'VisualLine') && editorTextFocus"
+    },
     // ---------- Editor commands ----------
     {
         "key": "space w",

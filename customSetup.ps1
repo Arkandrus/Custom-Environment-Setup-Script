@@ -30,9 +30,9 @@
 #>
 [CmdletBinding()]
 param(
-    [string]$RepoOwner   = 'Arkandrus',
-    [string]$RepoName    = 'Custom-Environment-Setup-Script',
-    [string]$RepoBranch  = 'master',
+    [string]$RepoOwner = 'Arkandrus',
+    [string]$RepoName = 'Custom-Environment-Setup-Script',
+    [string]$RepoBranch = 'master',
     [string]$LocalConfigDir,
 
     [switch]$BackupExisting,
@@ -46,7 +46,7 @@ $ErrorActionPreference = 'Stop'
 # --- Configuration ---------------------------------------------------------
 
 $RawBase = "https://raw.githubusercontent.com/$RepoOwner/$RepoName/$RepoBranch"
-$SettingsUrl    = "$RawBase/settings.json"
+$SettingsUrl = "$RawBase/settings.json"
 $KeybindingsUrl = "$RawBase/keybindings.json"
 
 $Extensions = @(
@@ -64,14 +64,14 @@ $Extensions = @(
     'ms-vscode.powershell'
 )
 
-$UserInstallPath   = Join-Path $env:LOCALAPPDATA 'Programs\Microsoft VS Code'
+$UserInstallPath = Join-Path $env:LOCALAPPDATA 'Programs\Microsoft VS Code'
 $SystemInstallPath = Join-Path $env:ProgramFiles 'Microsoft VS Code'
 
 # --- Logging helpers -------------------------------------------------------
 
 function Write-Step($msg) { Write-Host "==> $msg" -ForegroundColor Cyan }
-function Write-Ok($msg)   { Write-Host "    $msg" -ForegroundColor Green }
-function Write-Warn2($msg){ Write-Host "    $msg" -ForegroundColor Yellow }
+function Write-Ok($msg) { Write-Host "    $msg" -ForegroundColor Green }
+function Write-Warn2($msg) { Write-Host "    $msg" -ForegroundColor Yellow }
 function Write-Err2($msg) { Write-Host "    $msg" -ForegroundColor Red }
 
 # --- Detection helpers -----------------------------------------------------
@@ -117,7 +117,7 @@ function Install-GitDirect {
     $headers = @{ 'User-Agent' = 'PowerShell-Setup-Script' }
     $rel = Invoke-RestMethod -Uri $api -Headers $headers -UseBasicParsing
     $asset = $rel.assets | Where-Object { $_.name -match '^Git-.*-64-bit\.exe$' } |
-             Select-Object -First 1
+    Select-Object -First 1
     if (-not $asset) { throw "Could not find Git 64-bit installer asset." }
 
     $installer = Join-Path $env:TEMP $asset.name
@@ -125,8 +125,8 @@ function Install-GitDirect {
     Invoke-Download -Url $asset.browser_download_url -OutFile $installer
 
     Write-Step "Installing Git silently..."
-    $args = @('/VERYSILENT','/NORESTART','/SUPPRESSMSGBOXES','/SP-',
-              '/COMPONENTS=icons,ext\reg\shellhere,assoc,assoc_sh')
+    $args = @('/VERYSILENT', '/NORESTART', '/SUPPRESSMSGBOXES', '/SP-',
+        '/COMPONENTS=icons,ext\reg\shellhere,assoc,assoc_sh')
     $p = Start-Process -FilePath $installer -ArgumentList $args -Wait -PassThru
     Remove-Item $installer -Force -ErrorAction SilentlyContinue
     if ($p.ExitCode -ne 0) { throw "Git installer exit code $($p.ExitCode)." }
@@ -142,10 +142,11 @@ function Install-PowerToysDirect {
     $arch = if ([Environment]::Is64BitOperatingSystem) {
         if ((Get-CimInstance Win32_Processor).Architecture -eq 12) { 'arm64' }
         else { 'x64' }
-    } else { 'x86' }
+    }
+    else { 'x86' }
 
     $asset = $rel.assets | Where-Object { $_.name -match "PowerToysSetup.*$arch\.exe$" } |
-             Select-Object -First 1
+    Select-Object -First 1
     if (-not $asset) { throw "Could not find PowerToys $arch installer." }
 
     $installer = Join-Path $env:TEMP $asset.name
@@ -153,8 +154,8 @@ function Install-PowerToysDirect {
     Invoke-Download -Url $asset.browser_download_url -OutFile $installer
 
     Write-Step "Installing PowerToys silently..."
-    $p = Start-Process -FilePath $installer -ArgumentList @('/silent','/norestart') `
-                       -Wait -PassThru
+    $p = Start-Process -FilePath $installer -ArgumentList @('/silent', '/norestart') `
+        -Wait -PassThru
     Remove-Item $installer -Force -ErrorAction SilentlyContinue
     if ($p.ExitCode -ne 0 -and $p.ExitCode -ne 3010) {
         throw "PowerToys installer exit code $($p.ExitCode)."
@@ -178,10 +179,12 @@ function Ensure-WingetPackage {
             --accept-source-agreements --accept-package-agreements 2>&1
         if ($out -match 'No applicable upgrade|up to date|No installed package') {
             Write-Ok "$Name is up to date."
-        } else {
+        }
+        else {
             Write-Ok "$Name upgraded."
         }
-    } else {
+    }
+    else {
         Write-Step "Installing $Name..."
         $out = winget install --id $Id --exact --silent `
             --accept-source-agreements --accept-package-agreements 2>&1
@@ -207,7 +210,8 @@ function Ensure-Git {
     }
     if (Test-WingetAvailable) {
         Ensure-WingetPackage -Name 'Git' -Id 'Git.Git' -SkipUpgrade:$SkipUpgrade
-    } else {
+    }
+    else {
         Write-Warn2 "winget unavailable; direct download for Git."
         Install-GitDirect
     }
@@ -226,7 +230,8 @@ function Ensure-PowerToys {
     }
     if (Test-WingetAvailable) {
         Ensure-WingetPackage -Name 'PowerToys' -Id 'Microsoft.PowerToys' -SkipUpgrade:$SkipUpgrade
-    } else {
+    }
+    else {
         Write-Warn2 "winget unavailable; direct download for PowerToys."
         Install-PowerToysDirect
     }
@@ -249,15 +254,16 @@ function Install-VSCode {
     $arch = if ([Environment]::Is64BitOperatingSystem) { 'x64' } else { '' }
     $url = if ($System) {
         "https://code.visualstudio.com/sha/download?build=stable&os=win32-$arch"
-    } else {
+    }
+    else {
         "https://code.visualstudio.com/sha/download?build=stable&os=win32-$arch-user"
     }
     $installer = Join-Path $env:TEMP "vscode-installer-$([guid]::NewGuid()).exe"
     Write-Step "Downloading VS Code installer..."
     Invoke-Download -Url $url -OutFile $installer
     Write-Step "Running VS Code installer silently..."
-    $args = @('/VERYSILENT','/NORESTART','/SP-',
-              '/MERGETASKS=!runcode,addcontextmenufiles,addcontextmenufolders,addtopath')
+    $args = @('/VERYSILENT', '/NORESTART', '/SP-',
+        '/MERGETASKS=!runcode,addcontextmenufiles,addcontextmenufolders,addtopath')
     $p = Start-Process -FilePath $installer -ArgumentList $args -Wait -PassThru
     Remove-Item $installer -Force -ErrorAction SilentlyContinue
     if ($p.ExitCode -ne 0) { throw "VS Code installer exit code $($p.ExitCode)." }
@@ -269,11 +275,12 @@ function Ensure-Extensions {
     Write-Step "Querying installed VS Code extensions..."
     $installedRaw = & $CodeCmd --list-extensions 2>$null
     $installed = @($installedRaw | ForEach-Object { $_.Trim().ToLowerInvariant() } |
-                   Where-Object { $_ })
+        Where-Object { $_ })
     foreach ($ext in $Wanted) {
         if ($installed -contains $ext.ToLowerInvariant()) {
             Write-Ok "Already installed: $ext"
-        } else {
+        }
+        else {
             Write-Step "Installing extension: $ext"
             $out = & $CodeCmd --install-extension $ext --force 2>&1
             if ($LASTEXITCODE -ne 0) { Write-Err2 "Failed: $ext`n$out" }
@@ -315,7 +322,8 @@ function Deploy-ConfigFile {
 
         Move-Item $tmp $DestPath -Force
         Write-Ok "Wrote $DestPath"
-    } finally {
+    }
+    finally {
         if (Test-Path $tmp) { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
     }
 }
@@ -359,7 +367,7 @@ function Deploy-Config {
 function Fetch-NuGetSetupScript {
     $scriptName = 'nugetSetup.ps1'
     $rawBase = "https://raw.githubusercontent.com/$RepoOwner/$RepoName/$RepoBranch"
-    $url     = "$rawBase/$scriptName"
+    $url = "$rawBase/$scriptName"
 
     $docs = [Environment]::GetFolderPath('MyDocuments')
     if ([string]::IsNullOrWhiteSpace($docs)) {
@@ -376,7 +384,8 @@ function Fetch-NuGetSetupScript {
         Write-Host "    To register a private NuGet feed later, run:" -ForegroundColor DarkGray
         Write-Host "      & '$dest' -FeedName '<name>' -FeedUrl '<v3-index-url>'" -ForegroundColor White
         Write-Host ""
-    } catch {
+    }
+    catch {
         Write-Warn2 "Could not download $scriptName`: $($_.Exception.Message)"
         Write-Warn2 "Fetch it manually from $url"
     }
@@ -388,7 +397,8 @@ Ensure-Git -SkipUpgrade:$NoUpgrade
 
 if ($SkipPowerToys) {
     Write-Warn2 "Skipping PowerToys (per -SkipPowerToys)."
-} else {
+}
+else {
     Ensure-PowerToys -SkipUpgrade:$NoUpgrade
 }
 
@@ -398,20 +408,21 @@ if (-not $vscode) {
     Install-VSCode -System:$SystemInstall
     $vscode = Get-VSCodePaths
     if (-not $vscode) { throw "VS Code not detected after install." }
-} else {
+}
+else {
     Write-Ok "Found VS Code at $($vscode.InstallDir)"
 }
 
 Ensure-Extensions -CodeCmd $vscode.CodeCmd -Wanted $Extensions
 
-$userDir      = Join-Path $env:APPDATA 'Code\User'
+$userDir = Join-Path $env:APPDATA 'Code\User'
 $settingsPath = Join-Path $userDir 'settings.json'
 $keybindsPath = Join-Path $userDir 'keybindings.json'
 
 Deploy-Config -FileName 'settings.json'    -Url $SettingsUrl    `
-              -DestPath $settingsPath -LocalDir $LocalConfigDir -Backup:$BackupExisting
+    -DestPath $settingsPath -LocalDir $LocalConfigDir -Backup:$BackupExisting
 Deploy-Config -FileName 'keybindings.json' -Url $KeybindingsUrl `
-              -DestPath $keybindsPath -LocalDir $LocalConfigDir -Backup:$BackupExisting
+    -DestPath $keybindsPath -LocalDir $LocalConfigDir -Backup:$BackupExisting
 
 Fetch-NuGetSetupScript
 

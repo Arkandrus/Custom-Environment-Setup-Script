@@ -33,6 +33,8 @@
 | `Shift+K` | Move line(s) up *(VisualLine)* |
 | `Space C A` | Code action |
 | `Space R N` | Rename symbol |
+| `?` (Shift+`,`) | Outdent selected lines *(Visual / VisualLine)* |
+| `_` (Shift+`-`) | Indent selected lines *(Visual / VisualLine)* |
 
 ---
 
