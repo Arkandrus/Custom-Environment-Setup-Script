@@ -1,4 +1,3 @@
-
 [
     // ====================================================================
     // Preserved bindings
@@ -303,21 +302,6 @@
         "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
     },
     {
-        "key": "space a",
-        "command": "vscode-harpoon.addEditor",
-        "when": "vim.mode == 'Normal' && editorTextFocus"
-    },
-    {
-        "key": "space h",
-        "command": "vscode-harpoon.editEditors",
-        "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
-    },
-    {
-        "key": "space p",
-        "command": "vscode-harpoon.editorQuickPick",
-        "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
-    },
-    {
         "key": "space [Digit1]",
         "command": "vscode-harpoon.gotoEditor1",
         "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
@@ -416,4 +400,3 @@
         "when": "vim.mode == 'Normal' && editorTextFocus && !panelFocus"
     }
 ]
-
