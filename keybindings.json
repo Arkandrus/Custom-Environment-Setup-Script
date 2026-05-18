@@ -212,6 +212,11 @@
         "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
     },
     {
+        "key": "space g t",
+        "command": "workbench.action.terminal.new",
+        "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
+    },
+    {
         "key": "space q",
         "command": "runCommands",
         "args": {

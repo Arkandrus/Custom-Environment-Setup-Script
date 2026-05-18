@@ -115,6 +115,7 @@
 | Key | Action |
 |-----|--------|
 | `Space G G` | Open Source Control view |
+| `Space G T` | Open new terminal at repo root |
 
 ---
 
