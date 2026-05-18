@@ -2,6 +2,7 @@
 
 > Leader key: `Space` (Vim Normal/Visual mode)
 > Keyboard: Czech QWERTZ — bare number row produces `+ ě š č ř ž ý á í é` (no Shift needed)
+> All bare number-row keys are remapped to their digit equivalents in Vim Normal mode (`+`=1, `ě`=2 … `é`=0)
 
 ---
 
@@ -92,7 +93,7 @@
 
 ## Harpoon
 
-> Slots 1–5 use physical number keys. On Czech QWERTZ those bare keys type `+ ě š č ř`.
+> Slots 1–5 use physical key codes (`[Digit1]`–`[Digit5]`) at the VSCode layer — unaffected by Vim digit remappings.
 
 | Key | Action |
 |-----|--------|
@@ -163,10 +164,25 @@
 | Key | Mode | Action |
 |-----|------|--------|
 | `Escape` | Normal | Clear search highlights (`:nohl`) |
-| `+` | Normal | Increment number — Czech bare `+` key replaces `Ctrl+A` |
-| `-` | Normal | Decrement number — replaces `Ctrl+X` |
 | `Ctrl+Q` | Normal | Enter Visual Block mode — replaces `Ctrl+V` |
 | `P` (lowercase) | Visual | Paste without clobbering register |
+| `ů` | Normal / Visual / Op-pending | First non-blank of line (`^`) |
+| `§` | Normal / Visual / Op-pending | End of line (`$`) |
+
+### Czech number-row digit remapping *(Normal mode)*
+
+| Bare key | Digit |
+|----------|-------|
+| `+` | `1` |
+| `ě` | `2` |
+| `š` | `3` |
+| `č` | `4` |
+| `ř` | `5` |
+| `ž` | `6` |
+| `ý` | `7` |
+| `á` | `8` |
+| `í` | `9` |
+| `é` | `0` (also the `0` line-start motion) |
 
 ---
 

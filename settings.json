@@ -189,23 +189,34 @@
             "silent": true
         },
         {
-            // Increment number (replaces lost <C-a>)
-            // On Czech QWERTZ, "+" is the bare leftmost number-row key.
-            "before": [
-                "+"
-            ],
-            "commands": [
-                "extension.vim_ctrl+a"
-            ]
+            "before": [ "+" ], "after": [ "1" ]
         },
         {
-            // Decrement number (symmetric)
-            "before": [
-                "-"
-            ],
-            "commands": [
-                "extension.vim_ctrl+x"
-            ]
+            "before": [ "ě" ], "after": [ "2" ]
+        },
+        {
+            "before": [ "š" ], "after": [ "3" ]
+        },
+        {
+            "before": [ "č" ], "after": [ "4" ]
+        },
+        {
+            "before": [ "ř" ], "after": [ "5" ]
+        },
+        {
+            "before": [ "ž" ], "after": [ "6" ]
+        },
+        {
+            "before": [ "ý" ], "after": [ "7" ]
+        },
+        {
+            "before": [ "á" ], "after": [ "8" ]
+        },
+        {
+            "before": [ "í" ], "after": [ "9" ]
+        },
+        {
+            "before": [ "é" ], "after": [ "0" ]
         },
         {
             // Visual block mode (replaces lost <C-v>)
