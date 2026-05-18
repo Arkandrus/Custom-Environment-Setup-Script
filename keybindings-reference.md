@@ -135,8 +135,9 @@
 |-----|--------|
 | `Space C C` | Toggle Copilot / auxiliary bar |
 | `Space C F` | Open Copilot Chat |
+| `Ctrl+1` | Return focus to editor from Claude Code chat |
 
-> **Note:** When Vim is in Normal mode inside a chat input, `Space` types a literal space instead of opening the leader menu — preventing accidental command triggers. Press `i` to enter Insert mode for normal typing.
+> **Note:** `Ctrl+H` and other Space-leader bindings are intercepted by the Claude Code webview and do not work from inside it. `Ctrl+1` is handled at the VSCode window level and always works.
 
 ---
 
