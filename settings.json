@@ -216,17 +216,39 @@
             "commands": [
                 "extension.vim_ctrl+v"
             ]
+        },
+        {
+            "before": [ "ů" ],
+            "after": [ "^" ]
+        },
+        {
+            "before": [ "§" ],
+            "after": [ "$" ]
         }
     ],
     "vim.visualModeKeyBindings": [
         {
             // Paste in visual mode without clobbering register
-            "before": [
-                "p"
-            ],
-            "after": [
-                "P"
-            ]
+            "before": [ "p" ],
+            "after": [ "P" ]
+        },
+        {
+            "before": [ "ů" ],
+            "after": [ "^" ]
+        },
+        {
+            "before": [ "§" ],
+            "after": [ "$" ]
+        }
+    ],
+    "vim.operatorPendingModeKeyBindings": [
+        {
+            "before": [ "ů" ],
+            "after": [ "^" ]
+        },
+        {
+            "before": [ "§" ],
+            "after": [ "$" ]
         }
     ],
     // Pin Vim to its own extension host process (reduces input lag)
