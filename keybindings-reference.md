@@ -218,6 +218,215 @@
 
 ---
 
+## Vim — Motion & Navigation
+
+> All motions compose with operators (`d`, `y`, `c`, `v`, …).
+
+### Character & word
+
+| Key | Action |
+|-----|--------|
+| `h` `j` `k` `l` | Left / down / up / right |
+| `w` / `W` | Next word start (word / WORD) |
+| `b` / `B` | Previous word start |
+| `e` / `E` | Next word end |
+| `ge` / `gE` | Previous word end |
+
+### Line
+
+| Key | Action |
+|-----|--------|
+| `0` *(bare `é`)* | Start of line (column 0) |
+| `ů` | First non-blank of line (`^`) |
+| `§` | End of line (`$`) |
+| `g_` | Last non-blank of line |
+| `_` | First non-blank (also used as indent in Visual — see Editor Actions) |
+
+### Screen / paragraph / file
+
+| Key | Action |
+|-----|--------|
+| `H` / `M` / `L` | Top / middle / bottom of screen |
+| `{` / `}` | Previous / next empty line (paragraph boundary) |
+| `gg` | First line of file |
+| `G` | Last line of file |
+| `{n}G` | Go to line *n* |
+| `Ctrl+D` / `Ctrl+U` | Scroll half-page down / up |
+| `Ctrl+F` / `Ctrl+B` | Scroll full page forward / back |
+| `zz` | Center current line on screen |
+| `zt` / `zb` | Current line to top / bottom |
+
+### Find on line
+
+| Key | Action |
+|-----|--------|
+| `f{c}` | Jump forward to character *c* |
+| `F{c}` | Jump backward to character *c* |
+| `t{c}` / `T{c}` | Jump to just before *c* (forward / backward) |
+| `;` / `,` | Repeat last `f/F/t/T` forward / backward |
+
+### Matching pairs
+
+| Key | Action |
+|-----|--------|
+| `%` | Jump to matching bracket / paren / brace |
+| `(` | Jump to `{` *(remapped — see Vim Extras)* |
+| `)` | Jump to `}` *(remapped — see Vim Extras)* |
+
+---
+
+## Vim — Operators & Text Objects
+
+> Pattern: `{operator}{motion}` or `{operator}{text-object}`.  
+> Double the operator to act on the whole line: `dd`, `yy`, `cc`, `>>`, `<<`.
+
+### Operators
+
+| Key | Action |
+|-----|--------|
+| `d` | Delete (cut) |
+| `y` | Yank (copy) |
+| `c` | Change (delete + enter Insert) |
+| `>` / `<` | Indent / outdent |
+| `=` | Auto-indent |
+| `g~` / `gu` / `gU` | Toggle / lower / upper case |
+| `!` | Filter through external program |
+
+### Useful shorthands
+
+| Key | Equivalent | Action |
+|-----|-----------|--------|
+| `x` | `dl` | Delete character under cursor |
+| `X` | `dh` | Delete character before cursor |
+| `D` | `d§` | Delete to end of line |
+| `C` | `c§` | Change to end of line |
+| `Y` | `yy` | Yank whole line (VSCode-Vim behaviour) |
+| `s` | `cl` | Substitute character |
+| `S` | `cc` | Substitute whole line |
+| `r{c}` | — | Replace character under cursor with *c* |
+| `~` | — | Toggle case of character under cursor |
+
+### Text objects *(used after `d`, `y`, `c`, `v`, …)*
+
+| Key | Selects |
+|-----|---------|
+| `iw` / `aw` | Inner word / word + surrounding space |
+| `iW` / `aW` | Inner WORD / WORD + space |
+| `is` / `as` | Inner sentence / sentence + space |
+| `ip` / `ap` | Inner paragraph / paragraph + blank line |
+| `i"` / `a"` | Inside / around double quotes |
+| `i'` / `a'` | Inside / around single quotes |
+| `` i` `` / `` a` `` | Inside / around backticks |
+| `i(` / `a(` | Inside / around `()` |
+| `i[` / `a[` | Inside / around `[]` |
+| `i{` / `a{` | Inside / around `{}` |
+| `i<` / `a<` | Inside / around `<>` |
+| `it` / `at` | Inside / around XML/HTML tag |
+
+### Surround *(vim-surround enabled)*
+
+| Key | Action |
+|-----|--------|
+| `ys{motion}{c}` | Add surround *c* around motion (e.g. `ysiw"` wraps word in `"`) |
+| `yss{c}` | Add surround around entire line |
+| `cs{old}{new}` | Change surrounding *old* to *new* (e.g. `cs'"` changes `'` to `"`) |
+| `ds{c}` | Delete surrounding *c* (e.g. `ds(` removes parentheses) |
+| `S{c}` | Surround Visual selection with *c* |
+
+---
+
+## Vim — Insert Mode
+
+| Key | Action |
+|-----|--------|
+| `i` / `I` | Insert before cursor / before first non-blank |
+| `a` / `A` | Append after cursor / after end of line |
+| `o` / `O` | Open new line below / above and enter Insert |
+| `gi` | Re-enter Insert at last insert position |
+| `Ctrl+W` | Delete word before cursor |
+| `Ctrl+U` | Delete to start of line |
+| `Ctrl+R {reg}` | Paste from register *reg* |
+| `Ctrl+O {cmd}` | Execute one Normal command then return to Insert |
+| `Escape` / `Ctrl+[` | Return to Normal mode |
+
+---
+
+## Vim — Visual Mode
+
+| Key | Action |
+|-----|--------|
+| `v` | Start character-wise Visual |
+| `V` | Start line-wise Visual |
+| `Ctrl+Q` | Start Visual Block *(remapped from `Ctrl+V` — see Vim Extras)* |
+| `gv` | Re-select last Visual selection |
+| `o` | Move cursor to other end of selection |
+| `p` | Paste over selection without clobbering register *(remapped — see Vim Extras)* |
+| `u` / `U` | Lowercase / uppercase selection |
+| `>` / `<` | Indent / outdent selection (stays in Visual) |
+| `?` | Outdent *(remapped — see Editor Actions)* |
+| `_` | Indent *(remapped — see Editor Actions)* |
+| `J` | Move selected lines down *(VisualLine — see Editor Actions)* |
+| `K` | Move selected lines up *(VisualLine — see Editor Actions)* |
+
+---
+
+## Vim — Search & Replace
+
+### Search navigation
+
+| Key | Action |
+|-----|--------|
+| `/{pattern}` | Search forward |
+| `?{pattern}` | Search backward |
+| `n` / `N` | Next / previous match |
+| `*` / `#` | Search forward / backward for word under cursor |
+| `g*` / `g#` | Same, but partial match |
+| `Escape` | Clear highlights *(remapped — see Vim Extras)* |
+
+### Substitution *(command-line)*
+
+| Command | Action |
+|---------|--------|
+| `:s/old/new/` | Replace first match on current line |
+| `:s/old/new/g` | Replace all matches on current line |
+| `:%s/old/new/g` | Replace all matches in file |
+| `:%s/old/new/gc` | Same, with confirmation prompt |
+| `:'<,'>s/old/new/g` | Replace in Visual selection |
+
+> Tip: `\v` at the start of a pattern enables "very magic" mode (standard regex without escaping `()`, `+`, etc.).
+
+---
+
+## Vim — Marks & Jumps
+
+| Key | Action |
+|-----|--------|
+| `m{a-z}` | Set local mark *a–z* |
+| `m{A-Z}` | Set global mark *A–Z* (cross-file) |
+| `` `{mark} `` | Jump to exact position of mark |
+| `'{mark}` | Jump to first non-blank of mark's line |
+| `` `. `` | Jump to position of last change |
+| `` `[ `` / `` `] `` | Start / end of last yank or change |
+| `` `< `` / `` `> `` | Start / end of last Visual selection |
+| `Ctrl+O` / `Ctrl+I` | Jump backward / forward in jump list |
+| `g;` / `g,` | Older / newer position in change list |
+
+---
+
+## Vim — Folds
+
+> VSCode-Vim maps fold keys to VSCode's native fold commands. Native Vim fold creation (`zf`, fold methods) is **not** supported.
+
+| Key | Action |
+|-----|--------|
+| `za` | Toggle fold under cursor |
+| `zo` / `zO` | Open fold / open all nested folds |
+| `zc` / `zC` | Close fold / close all nested folds |
+| `zR` | Open all folds in file |
+| `zM` | Close all folds in file |
+
+---
+
 ## Miscellaneous
 
 | Key | Action |
