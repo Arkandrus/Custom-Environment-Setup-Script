@@ -1,10 +1,6 @@
-
 {
-    // ====================================================================
-    // Layout: max code area, right bar reserved for Copilot
-    // ====================================================================
-    "workbench.activityBar.location": "default",
-    "workbench.sideBar.location": "left",
+    "workbench.editor.restoreViewState": true,
+    "files.hotExit": "onExitAndWindowClose",
     "workbench.editor.showTabs": "multiple",
     "workbench.editor.tabSizing": "shrink",
     "workbench.editor.limit.enabled": true,
@@ -14,7 +10,6 @@
     "workbench.list.smoothScrolling": true,
     "workbench.startupEditor": "none",
     "window.commandCenter": false,
-    "window.menuBarVisibility": "compact",
     "window.titleBarStyle": "custom",
     "workbench.secondarySideBar.defaultVisibility": "hidden",
     // ====================================================================
@@ -172,7 +167,8 @@
         "<C-f>": false,
         "<C-c>": false,
         "<C-v>": false,
-        "<C-z>": false
+        "<C-z>": false,
+        "<C-p>": false
     },
     "vim.normalModeKeyBindingsNonRecursive": [
         {
@@ -189,34 +185,84 @@
             "silent": true
         },
         {
-            "before": [ "+" ], "after": [ "1" ]
+            "before": [
+                "+"
+            ],
+            "after": [
+                "1"
+            ]
         },
         {
-            "before": [ "ě" ], "after": [ "2" ]
+            "before": [
+                "ě"
+            ],
+            "after": [
+                "2"
+            ]
         },
         {
-            "before": [ "š" ], "after": [ "3" ]
+            "before": [
+                "š"
+            ],
+            "after": [
+                "3"
+            ]
         },
         {
-            "before": [ "č" ], "after": [ "4" ]
+            "before": [
+                "č"
+            ],
+            "after": [
+                "4"
+            ]
         },
         {
-            "before": [ "ř" ], "after": [ "5" ]
+            "before": [
+                "ř"
+            ],
+            "after": [
+                "5"
+            ]
         },
         {
-            "before": [ "ž" ], "after": [ "6" ]
+            "before": [
+                "ž"
+            ],
+            "after": [
+                "6"
+            ]
         },
         {
-            "before": [ "ý" ], "after": [ "7" ]
+            "before": [
+                "ý"
+            ],
+            "after": [
+                "7"
+            ]
         },
         {
-            "before": [ "á" ], "after": [ "8" ]
+            "before": [
+                "á"
+            ],
+            "after": [
+                "8"
+            ]
         },
         {
-            "before": [ "í" ], "after": [ "9" ]
+            "before": [
+                "í"
+            ],
+            "after": [
+                "9"
+            ]
         },
         {
-            "before": [ "é" ], "after": [ "0" ]
+            "before": [
+                "é"
+            ],
+            "after": [
+                "0"
+            ]
         },
         {
             // Visual block mode (replaces lost <C-v>)
@@ -229,37 +275,509 @@
             ]
         },
         {
-            "before": [ "ů" ],
-            "after": [ "^" ]
+            "before": [
+                "ů"
+            ],
+            "after": [
+                "^"
+            ]
         },
         {
-            "before": [ "§" ],
-            "after": [ "$" ]
+            "before": [
+                "§"
+            ],
+            "after": [
+                "$"
+            ]
+        },
+        {
+            "before": [
+                "("
+            ],
+            "after": [
+                "{"
+            ]
+        },
+        {
+            "before": [
+                ")"
+            ],
+            "after": [
+                "}"
+            ]
+        },
+        // ---------- Leader (space) bindings — handled by VIM extension, safe in terminal ----------
+        {
+            "before": [
+                "<leader>",
+                "j"
+            ],
+            "commands": [
+                "workbench.action.togglePanel"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "b",
+                "o"
+            ],
+            "commands": [
+                "workbench.action.closeOtherEditors"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "e"
+            ],
+            "commands": [
+                "workbench.action.toggleSidebarVisibility",
+                "workbench.files.action.focusFilesExplorer"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "w"
+            ],
+            "commands": [
+                "workbench.action.files.save"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "g",
+                "g"
+            ],
+            "commands": [
+                "workbench.view.scm",
+                "workbench.scm.focus"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "g",
+                "t"
+            ],
+            "commands": [
+                "workbench.action.terminal.new"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "q"
+            ],
+            "commands": [
+                "workbench.action.files.save",
+                "workbench.action.closeActiveEditor"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "c",
+                "a"
+            ],
+            "commands": [
+                "editor.action.codeAction"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "r",
+                "n"
+            ],
+            "commands": [
+                "editor.action.rename"
+            ],
+            "when": [
+                "editorHasRenameProvider",
+                "!editorReadonly"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "g",
+                "s"
+            ],
+            "commands": [
+                "workbench.action.gotoSymbol"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "f",
+                "f"
+            ],
+            "commands": [
+                "workbench.action.quickOpen"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "g",
+                "d"
+            ],
+            "commands": [
+                "editor.action.revealDefinition"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "g",
+                "r"
+            ],
+            "commands": [
+                "editor.action.goToReferences"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "g",
+                "i"
+            ],
+            "commands": [
+                "editor.action.goToImplementation"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "d",
+                "n"
+            ],
+            "commands": [
+                "editor.action.marker.next"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "d",
+                "p"
+            ],
+            "commands": [
+                "editor.action.marker.prev"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "s"
+            ],
+            "commands": [
+                "workbench.action.splitEditorRight"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "v"
+            ],
+            "commands": [
+                "workbench.action.splitEditorDown"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "a"
+            ],
+            "commands": [
+                "vscode-harpoon.addEditor"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "h"
+            ],
+            "commands": [
+                "vscode-harpoon.editEditors"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "p"
+            ],
+            "commands": [
+                "vscode-harpoon.editorQuickPick"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "+"
+            ],
+            "commands": [
+                "vscode-harpoon.gotoEditor1"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "ě"
+            ],
+            "commands": [
+                "vscode-harpoon.gotoEditor2"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "š"
+            ],
+            "commands": [
+                "vscode-harpoon.gotoEditor3"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "č"
+            ],
+            "commands": [
+                "vscode-harpoon.gotoEditor4"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "ř"
+            ],
+            "commands": [
+                "vscode-harpoon.gotoEditor5"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "c",
+                "c"
+            ],
+            "commands": [
+                "workbench.action.toggleAuxiliaryBar"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "c",
+                "f"
+            ],
+            "commands": [
+                "workbench.action.chat.openInSidebar"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "t",
+                "t"
+            ],
+            "commands": [
+                "workbench.view.testing.focus"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "t",
+                "r"
+            ],
+            "commands": [
+                "testing.runAll"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "t",
+                "f"
+            ],
+            "commands": [
+                "testing.runCurrentFile"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "z"
+            ],
+            "commands": [
+                "workbench.action.toggleZenMode"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "o"
+            ],
+            "commands": [
+                "outline.focus"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "u",
+                "h"
+            ],
+            "commands": [
+                "workbench.action.increaseViewWidth"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "u",
+                "H"
+            ],
+            "commands": [
+                "workbench.action.decreaseViewWidth"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "u",
+                "v"
+            ],
+            "commands": [
+                "workbench.action.increaseViewHeight"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "u",
+                "V"
+            ],
+            "commands": [
+                "workbench.action.decreaseViewHeight"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "u",
+                "m"
+            ],
+            "commands": [
+                "workbench.action.maximizeEditor"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "f",
+                "o"
+            ],
+            "commands": [
+                "workbench.action.files.openFolder"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "f",
+                "r"
+            ],
+            "commands": [
+                "workbench.action.openRecent"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "n",
+                "b"
+            ],
+            "commands": [
+                "csdevkit.buildSolution"
+            ],
+            "when": [
+                "solutionOpened"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "n",
+                "r"
+            ],
+            "commands": [
+                "csdevkit.rebuildSolution"
+            ],
+            "when": [
+                "solutionOpened"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "n",
+                "s"
+            ],
+            "commands": [
+                "csdevkit.openSolution"
+            ]
         }
     ],
     "vim.visualModeKeyBindings": [
         {
             // Paste in visual mode without clobbering register
-            "before": [ "p" ],
-            "after": [ "P" ]
+            "before": [
+                "p"
+            ],
+            "after": [
+                "P"
+            ]
         },
         {
-            "before": [ "ů" ],
-            "after": [ "^" ]
+            "before": [
+                "ů"
+            ],
+            "after": [
+                "^"
+            ]
         },
         {
-            "before": [ "§" ],
-            "after": [ "$" ]
+            "before": [
+                "§"
+            ],
+            "after": [
+                "$"
+            ]
         }
     ],
     "vim.operatorPendingModeKeyBindings": [
         {
-            "before": [ "ů" ],
-            "after": [ "^" ]
+            "before": [
+                "ů"
+            ],
+            "after": [
+                "^"
+            ]
         },
         {
-            "before": [ "§" ],
-            "after": [ "$" ]
+            "before": [
+                "§"
+            ],
+            "after": [
+                "$"
+            ]
         }
     ],
     // Pin Vim to its own extension host process (reduces input lag)
@@ -280,7 +798,14 @@
     "update.showReleaseNotes": false,
     "extensions.ignoreRecommendations": true,
     "security.workspace.trust.untrustedFiles": "open",
-    "testing.automaticallyOpenTestResults": "neverOpen"
+    "testing.automaticallyOpenTestResults": "neverOpen",
+    "diffEditor.ignoreTrimWhitespace": false,
+    "chat.viewSessions.orientation": "stacked",
+    "window.menuBarVisibility": "compact",
+    "workbench.iconTheme": "material-icon-theme",
+    "workbench.colorTheme": "Visual Studio Dark Theme",
+    "material-icon-theme.folders.theme": "classic",
+    "gitlens.ai.model": "vscode",
+    "gitlens.ai.vscode.model": "copilot:gpt-4.1",
+    "vssolution.solutionExplorerIcons": "current-theme"
 }
-
-
