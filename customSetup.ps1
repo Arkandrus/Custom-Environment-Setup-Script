@@ -61,7 +61,8 @@ $Extensions = @(
     'wayou.vscode-todo-highlight'
     'vscodevim.vim',
     'tobias-z.vscode-harpoon',
-    'ms-vscode.powershell'
+    'ms-vscode.powershell',
+	'adrien.visualstudiodarktheme'
 )
 
 $UserInstallPath = Join-Path $env:LOCALAPPDATA 'Programs\Microsoft VS Code'
