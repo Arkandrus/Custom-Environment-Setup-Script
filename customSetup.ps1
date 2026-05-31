@@ -63,7 +63,8 @@ $Extensions = @(
     'tobias-z.vscode-harpoon',
     'ms-vscode.powershell',
 	'adrien.visualstudiodarktheme',
-	'pkief.material-icon-theme'
+	'pkief.material-icon-theme',
+	'vscode-solution-explorer'
 )
 
 $UserInstallPath = Join-Path $env:LOCALAPPDATA 'Programs\Microsoft VS Code'
