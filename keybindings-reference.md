@@ -194,7 +194,7 @@
 | Key | Mode | Action |
 |-----|------|--------|
 | `Escape` | Normal | Clear search highlights (`:nohl`) |
-| `Ctrl+Q` | Normal | Enter Visual Block mode — replaces `Ctrl+V` |
+| `Ctrl+V` | Normal | Enter Visual Block mode — replaces `Ctrl+V` |
 | `P` (lowercase) | Visual | Paste without clobbering register |
 | `ů` | Normal / Visual / Op-pending | First non-blank of line (`^`) |
 | `§` | Normal / Visual / Op-pending | End of line (`$`) |
@@ -277,7 +277,7 @@
 
 ## Vim — Operators & Text Objects
 
-> Pattern: `{operator}{motion}` or `{operator}{text-object}`.  
+> Pattern: `{operator}{motion}` or `{operator}{text-object}`.
 > Double the operator to act on the whole line: `dd`, `yy`, `cc`, `>>`, `<<`.
 
 ### Operators
