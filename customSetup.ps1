@@ -38,10 +38,61 @@ param(
     [switch]$BackupExisting,
     [switch]$SystemInstall,
     [switch]$NoUpgrade,
-    [switch]$SkipPowerToys
+    [switch]$SkipPowerToys,
+
+    # Set automatically by the elevation re-launch — do not pass manually.
+    [switch]$_WasElevated
 )
 
 $ErrorActionPreference = 'Stop'
+
+# --- Privilege elevation ---------------------------------------------------
+
+if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    Write-Host "Skript neni spusten jako administrator. Probiha elevace..." -ForegroundColor Yellow
+
+    $scriptPath = $MyInvocation.MyCommand.Path
+    $deleteTempScript = $false
+
+    if ([string]::IsNullOrEmpty($scriptPath)) {
+        # Piped execution (irm | iex) — dump the in-memory script to a temp file.
+        $scriptPath = Join-Path $env:TEMP "setup-elevated-$([guid]::NewGuid()).ps1"
+        $MyInvocation.ScriptBlock.Ast.Extent.Text | Set-Content -Path $scriptPath -Encoding UTF8
+        $deleteTempScript = $true
+    }
+
+    # Build the parameter string to forward to the elevated process.
+    $forwardedParams = foreach ($key in $PSBoundParameters.Keys) {
+        $val = $PSBoundParameters[$key]
+        if ($val -is [switch]) {
+            if ($val.IsPresent) { "-$key" }
+        }
+        else {
+            $escaped = ($val -replace '"', '`"')
+            "-$key `"$escaped`""
+        }
+    }
+    $paramString = $forwardedParams -join ' '
+
+    # Always append -_WasElevated so the relaunched process knows to pause at the end.
+    if (-not [string]::IsNullOrWhiteSpace($paramString)) {
+        $paramString = "$paramString -_WasElevated"
+    }
+    else {
+        $paramString = '-_WasElevated'
+    }
+
+    # Both branches use -Command so we can wrap execution in try/catch and keep
+    # the window open on failure.
+    $escapedPath = $scriptPath -replace '"', '`"'
+    $cleanup = if ($deleteTempScript) { "Remove-Item `"$escapedPath`" -Force -ErrorAction SilentlyContinue; " } else { '' }
+    $pauseCmd = "Write-Host ''; Write-Host 'Stiskni Enter pro uzavreni okna...' -ForegroundColor DarkGray; `$null = Read-Host"
+    $inline = "try { & `"$escapedPath`" $paramString } catch { Write-Host `"CHYBA: `$_`" -ForegroundColor Red; $pauseCmd } finally { ${cleanup}}"
+    Start-Process powershell.exe -Verb RunAs -ArgumentList @(
+        '-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', $inline
+    )
+    exit
+}
 
 # --- Configuration ---------------------------------------------------------
 
@@ -275,6 +326,10 @@ function Install-VSCode {
 
 function Ensure-Extensions {
     param([string]$CodeCmd, [string[]]$Wanted)
+    # Use 'Continue' locally: VS Code CLI writes Node.js deprecation warnings to
+    # stderr which PowerShell converts to ErrorRecords. With 'Stop' those would
+    # terminate the script; 'Continue' lets us rely on $LASTEXITCODE instead.
+    $local:ErrorActionPreference = 'Continue'
     Write-Step "Querying installed VS Code extensions..."
     $installedRaw = & $CodeCmd --list-extensions 2>$null
     $installed = @($installedRaw | ForEach-Object { $_.Trim().ToLowerInvariant() } |
@@ -430,3 +485,9 @@ Deploy-Config -FileName 'keybindings.json' -Url $KeybindingsUrl `
 Fetch-NuGetSetupScript
 
 Write-Step "Done."
+
+if ($_WasElevated) {
+    Write-Host ""
+    Write-Host "Stiskni Enter pro uzavreni okna..." -ForegroundColor DarkGray
+    $null = Read-Host
+}
