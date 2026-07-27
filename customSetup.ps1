@@ -47,10 +47,9 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-# --- Detect pipeline invocation (irm | iex without parameters) -----------
+# --- Detect if interactive menu should be shown (no parameters given) ----
 
-$_NeedInteractive = [string]::IsNullOrEmpty($MyInvocation.MyCommand.Path) -and
--not $_WasElevated -and $PSBoundParameters.Count -eq 0
+$_NeedInteractive = $PSBoundParameters.Count -eq 0 -and -not $_WasElevated
 
 # --- Privilege elevation ---------------------------------------------------
 
@@ -102,27 +101,80 @@ if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
     exit
 }
 
-# --- Interactive mode (runs in the elevated window) -----------------------
+# --- Interactive mode (pipeline without parameters, runs in the effective window) ---
 
-if ($_Interactive) {
-    Write-Host ""
-    Write-Host "=== Interaktivni nastaveni ===" -ForegroundColor Cyan
-    Write-Host "  (Stiskni Enter pro vychozi hodnotu v zavorkach)" -ForegroundColor DarkGray
-    Write-Host ""
+if ($_NeedInteractive -or $_Interactive) {
 
-    $ans = Read-Host "Zalohovat stavajici settings.json a keybindings.json? [y/N]"
-    if ($ans -match '^[yY]') { $BackupExisting = [switch]$true }
+    $setupOptions = @(
+        [PSCustomObject]@{ Name = 'Zalohovat settings.json a keybindings.json'; Var = 'BackupExisting' }
+        [PSCustomObject]@{ Name = 'Instalovat VS Code pro vsechny uzivatele (system-wide)'; Var = 'SystemInstall' }
+        [PSCustomObject]@{ Name = 'Preskocit upgrade existujicich balicku (Git, PowerToys)'; Var = 'NoUpgrade' }
+        [PSCustomObject]@{ Name = 'Preskocit instalaci PowerToys'; Var = 'SkipPowerToys' }
+    )
 
-    $ans = Read-Host "Instalovat VS Code pro vsechny uzivatele (system-wide, vyzaduje admin)? [y/N]"
-    if ($ans -match '^[yY]') { $SystemInstall = [switch]$true }
+    $optState = @{}
+    foreach ($opt in $setupOptions) {
+        $optState[$opt.Var] = (Get-Variable -Name $opt.Var -ValueOnly).IsPresent
+    }
 
-    $ans = Read-Host "Preskocit upgrade existujicich balicku (Git, PowerToys)? [y/N]"
-    if ($ans -match '^[yY]') { $NoUpgrade = [switch]$true }
+    function Show-SetupMenu {
+        Clear-Host
+        Write-Host "============================================" -ForegroundColor Cyan
+        Write-Host "   Custom Environment Setup" -ForegroundColor Cyan
+        Write-Host "============================================" -ForegroundColor Cyan
+        Write-Host ""
+        Write-Host "  Nastaveni:" -ForegroundColor Cyan
+        Write-Host ""
+        for ($i = 0; $i -lt $setupOptions.Count; $i++) {
+            $opt = $setupOptions[$i]
+            $enabled = $optState[$opt.Var]
+            $mark = if ($enabled) { 'X' } else { ' ' }
+            $color = if ($enabled) { 'Yellow' } else { 'Gray' }
+            Write-Host ("  [{0}]  {1}. {2}" -f $mark, ($i + 1), $opt.Name) -ForegroundColor $color
+        }
+        Write-Host ""
+        Write-Host ("  {0}. Spustit instalaci" -f ($setupOptions.Count + 1)) -ForegroundColor Green
+        Write-Host ("  {0}. Ukoncit" -f ($setupOptions.Count + 2))
+        Write-Host ""
+    }
 
-    $ans = Read-Host "Preskocit instalaci PowerToys? [y/N]"
-    if ($ans -match '^[yY]') { $SkipPowerToys = [switch]$true }
+    do {
+        Show-SetupMenu
+        $choice = Read-Host "  Vyberte moznost"
 
-    Write-Host ""
+        if ($choice -match '^\d+$') {
+            $choiceInt = [int]$choice
+
+            if ($choiceInt -ge 1 -and $choiceInt -le $setupOptions.Count) {
+                $var = $setupOptions[$choiceInt - 1].Var
+                $optState[$var] = -not $optState[$var]
+            }
+            elseif ($choiceInt -eq ($setupOptions.Count + 1)) {
+                break
+            }
+            elseif ($choiceInt -eq ($setupOptions.Count + 2)) {
+                Clear-Host
+                Write-Host "  Instalace zrusena." -ForegroundColor Yellow
+                Write-Host ""
+                exit
+            }
+            else {
+                Write-Host "  Neplatna volba." -ForegroundColor Red
+                Start-Sleep -Milliseconds 600
+            }
+        }
+        else {
+            Write-Host "  Neplatna volba." -ForegroundColor Red
+            Start-Sleep -Milliseconds 600
+        }
+    } while ($true)
+
+    # Apply selections back to the script-level switch parameters.
+    foreach ($opt in $setupOptions) {
+        if ($optState[$opt.Var]) { Set-Variable -Name $opt.Var -Value ([switch]$true) }
+    }
+
+    Clear-Host
 }
 
 # --- Configuration ---------------------------------------------------------
