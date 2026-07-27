@@ -32,6 +32,8 @@
     "editor.fontFamily": "Consolas, 'Courier New', monospace",
     "editor.fontSize": 14,
     "editor.fontLigatures": false,
+    "editor.parameterHints.enabled": true,
+    "editor.parameterHints.cycle": true,
     "editor.lineHeight": 1.5,
     "editor.cursorBlinking": "smooth",
     "editor.cursorSmoothCaretAnimation": "on",
@@ -55,7 +57,7 @@
     "files.trimTrailingWhitespace": true,
     "files.insertFinalNewline": true,
     "files.trimFinalNewlines": true,
-	"zenMode.centerLayout": false,
+    "zenMode.centerLayout": false,
     // ====================================================================
     // Terminal
     // ====================================================================
