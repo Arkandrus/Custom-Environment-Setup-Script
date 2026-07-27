@@ -115,7 +115,8 @@ $Extensions = @(
     'ms-vscode.powershell',
     'adrien.visualstudiodarktheme',
     'pkief.material-icon-theme',
-    'fernandoescolar.vscode-solution-explorer'
+    'fernandoescolar.vscode-solution-explorer',
+    'usernamehw.errorlens'
 )
 
 $UserInstallPath = Join-Path $env:LOCALAPPDATA 'Programs\Microsoft VS Code'
