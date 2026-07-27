@@ -41,10 +41,16 @@ param(
     [switch]$SkipPowerToys,
 
     # Set automatically by the elevation re-launch — do not pass manually.
-    [switch]$_WasElevated
+    [switch]$_WasElevated,
+    [switch]$_Interactive
 )
 
 $ErrorActionPreference = 'Stop'
+
+# --- Detect pipeline invocation (irm | iex without parameters) -----------
+
+$_NeedInteractive = [string]::IsNullOrEmpty($MyInvocation.MyCommand.Path) -and
+-not $_WasElevated -and $PSBoundParameters.Count -eq 0
 
 # --- Privilege elevation ---------------------------------------------------
 
@@ -62,16 +68,18 @@ if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
     }
 
     # Build the parameter string to forward to the elevated process.
-    $forwardedParams = foreach ($key in $PSBoundParameters.Keys) {
+    $forwardedParams = [System.Collections.Generic.List[string]]::new()
+    foreach ($key in $PSBoundParameters.Keys) {
         $val = $PSBoundParameters[$key]
         if ($val -is [switch]) {
-            if ($val.IsPresent) { "-$key" }
+            if ($val.IsPresent) { $forwardedParams.Add("-$key") }
         }
         else {
             $escaped = ($val -replace '"', '`"')
-            "-$key `"$escaped`""
+            $forwardedParams.Add("-$key `"$escaped`"")
         }
     }
+    if ($_NeedInteractive) { $forwardedParams.Add('-_Interactive') }
     $paramString = $forwardedParams -join ' '
 
     # Always append -_WasElevated so the relaunched process knows to pause at the end.
@@ -92,6 +100,29 @@ if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
         '-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', $inline
     )
     exit
+}
+
+# --- Interactive mode (runs in the elevated window) -----------------------
+
+if ($_Interactive) {
+    Write-Host ""
+    Write-Host "=== Interaktivni nastaveni ===" -ForegroundColor Cyan
+    Write-Host "  (Stiskni Enter pro vychozi hodnotu v zavorkach)" -ForegroundColor DarkGray
+    Write-Host ""
+
+    $ans = Read-Host "Zalohovat stavajici settings.json a keybindings.json? [y/N]"
+    if ($ans -match '^[yY]') { $BackupExisting = [switch]$true }
+
+    $ans = Read-Host "Instalovat VS Code pro vsechny uzivatele (system-wide, vyzaduje admin)? [y/N]"
+    if ($ans -match '^[yY]') { $SystemInstall = [switch]$true }
+
+    $ans = Read-Host "Preskocit upgrade existujicich balicku (Git, PowerToys)? [y/N]"
+    if ($ans -match '^[yY]') { $NoUpgrade = [switch]$true }
+
+    $ans = Read-Host "Preskocit instalaci PowerToys? [y/N]"
+    if ($ans -match '^[yY]') { $SkipPowerToys = [switch]$true }
+
+    Write-Host ""
 }
 
 # --- Configuration ---------------------------------------------------------
