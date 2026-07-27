@@ -812,5 +812,20 @@
     "material-icon-theme.folders.theme": "classic",
     "gitlens.ai.model": "vscode",
     "gitlens.ai.vscode.model": "copilot:gpt-4.1",
-    "vssolution.solutionExplorerIcons": "current-theme"
+    "vssolution.solutionExplorerIcons": "current-theme",
+    // ====================================================================
+    // Semantic token colors (match Visual Studio Dark theme)
+    // ====================================================================
+    "editor.semanticTokenColorCustomizations": {
+        "enabled": true,
+        "rules": {
+            "method": "#DCDCAA",
+            "method.static": "#DCDCAA",
+            "member": "#DCDCAA",
+            "member.static": "#DCDCAA",
+            "function": "#DCDCAA",
+            "variable": "#9CDCFE",
+            "parameter": "#9CDCFE"
+        }
+    }
 }
