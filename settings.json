@@ -29,6 +29,7 @@
     // Editor
     // ====================================================================
     "editor.minimap.enabled": false,
+    "editor.fontFamily": "Consolas, 'Courier New', monospace",
     "editor.fontSize": 14,
     "editor.lineHeight": 1.5,
     "editor.cursorBlinking": "smooth",
