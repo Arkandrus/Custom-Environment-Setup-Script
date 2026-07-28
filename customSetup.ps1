@@ -189,8 +189,6 @@ $Extensions = @(
     'ms-dotnettools.csdevkit',
     'editorconfig.editorconfig',
     'formulahendry.code-runner',
-    'streetsidesoftware.code-spell-checker',
-    'eamodio.gitlens',
     'ms-vscode.live-server',
     'wayou.vscode-todo-highlight'
     'vscodevim.vim',
