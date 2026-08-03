@@ -827,5 +827,38 @@
             "variable": "#9CDCFE",
             "parameter": "#9CDCFE"
         }
+    },
+    // ====================================================================
+    // Markdown syntax colors in the editor (preview uses its own CSS —
+    // this fixes only the low-contrast TextMate colors in the source view)
+    // ====================================================================
+    "editor.tokenColorCustomizations": {
+        "[Visual Studio Dark Theme]": {
+            "textMateRules": [
+                {
+                    "scope": "markup.heading",
+                    "settings": {
+                        "foreground": "#DCDCAA",
+                        "fontStyle": "bold"
+                    }
+                },
+                {
+                    "scope": [
+                        "markup.list",
+                        "beginning.punctuation.definition.list.markdown"
+                    ],
+                    "settings": {
+                        "foreground": "#4FC1FF"
+                    }
+                },
+                {
+                    "scope": "markup.quote.markdown",
+                    "settings": {
+                        "foreground": "#B5CEA8",
+                        "fontStyle": "italic"
+                    }
+                }
+            ]
+        }
     }
 }
